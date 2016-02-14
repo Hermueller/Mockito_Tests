@@ -39,6 +39,42 @@ public class CoffeeMachineTest {
     }
 
     @Test
+    public void t000_testCoffee() throws NotEnoughException {
+
+        //    BASICS
+        when(coffeeContainer.getPortion(Portion.LARGE))
+                .thenReturn(true)
+                .thenReturn(false)
+                .thenReturn(true);
+
+        doReturn(true).doReturn(false).doReturn(true).when(coffeeContainer).getPortion(Portion.LARGE);
+
+        when(waterContainer.getPortion(Portion.LARGE))
+                .thenReturn(true, true, true);
+
+        assertTrue(coffeeMachine.makeCoffee(Portion.LARGE));
+        assertFalse(coffeeMachine.makeCoffee(Portion.LARGE));
+        assertTrue(coffeeMachine.makeCoffee(Portion.LARGE));
+
+        //   STUBBER
+
+        doNothing().doCallRealMethod().when(coffeeContainer).clear();
+        doNothing().doCallRealMethod().when(waterContainer).clear();
+
+        coffeeMachine.cleanCoffeeMachine();
+        coffeeMachine.cleanCoffeeMachine();
+
+
+        //    IN ORDER
+        InOrder inOrder = inOrder(coffeeContainer, waterContainer);
+
+        coffeeMachine.cleanCoffeeMachine();
+
+        inOrder.verify(waterContainer).clear();
+        inOrder.verify(coffeeContainer).clear();
+    }
+
+    @Test
     public void t201_MakeCoffee() throws NotEnoughException {
         when(coffeeContainer.getPortion(Portion.LARGE)).thenReturn(true);
         when(waterContainer.getPortion(Portion.LARGE)).thenReturn(true);
@@ -47,15 +83,7 @@ public class CoffeeMachineTest {
     }
 
     @Test(expected=NotEnoughException.class)
-    public void t202_NotEnoughException01() throws NotEnoughException {
-        when(waterContainer.getPortion(Portion.MEDIUM)).thenReturn(true);
-        doThrow(new NotEnoughException()).when(coffeeContainer).getPortion(Portion.MEDIUM);
-
-        coffeeMachine.makeCoffee(Portion.MEDIUM);
-    }
-
-    @Test(expected=NotEnoughException.class)
-    public void t203_NotEnoughException02() throws NotEnoughException {
+    public void t202_NotEnoughException02() throws NotEnoughException {
 
         when(coffeeContainer.getPortion(Portion.LARGE))
                 .thenReturn(true)
@@ -73,7 +101,7 @@ public class CoffeeMachineTest {
     }
 
     @Test
-    public void t204_CompareCoffee() {
+    public void t203_CompareCoffee() {
         when(coffee.compareTo(anyChar())).thenReturn(-1);
 
         assertEquals(-1, coffee.compareTo(anyChar()));
@@ -88,6 +116,14 @@ public class CoffeeMachineTest {
 
         assertEquals(0, coffee.compareTo(Type.ESPRESSO));
         assertEquals(-1, coffee.compareTo(new Coffee(Type.ESPRESSO)));
+    }
+
+    @Test(expected=NotEnoughException.class)
+    public void t204_NotEnoughException01() throws NotEnoughException {
+        when(waterContainer.getPortion(Portion.MEDIUM)).thenReturn(true);
+        doThrow(new NotEnoughException()).when(coffeeContainer).getPortion(Portion.MEDIUM);
+
+        coffeeMachine.makeCoffee(Portion.MEDIUM);
     }
 
     @Test

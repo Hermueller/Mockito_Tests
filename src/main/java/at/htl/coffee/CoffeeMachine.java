@@ -12,15 +12,12 @@ public class CoffeeMachine {
     }
 
     public boolean makeCoffee(Portion portion) throws NotEnoughException  {
-        if (coffeeContainer.getPortion(portion) && waterContainer.getPortion(portion)) {
-            return true;
-        }
-        throw new NotEnoughException();
+        return coffeeContainer.getPortion(portion) && waterContainer.getPortion(portion);
     }
 
     public void cleanCoffeeMachine() {
-        coffeeContainer.clear();
         waterContainer.clear();
+        coffeeContainer.clear();
     }
 
 }

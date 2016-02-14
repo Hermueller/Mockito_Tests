@@ -1,4 +1,3 @@
-
 import at.htl.mockito.MessageList;
 import at.htl.mockito.Messenger;
 import org.junit.After;
@@ -34,6 +33,38 @@ public class MessageTest {
     public void tearDown() {
         msg = null;
         ml = null;
+    }
+
+    @Test
+    public void t000_MessageListParameters() {
+
+        //    PARAMETERS        TIMES()
+        ml.addMessageAt(1, "Hello");
+        ml.addMessageAt(1, "Hello");
+
+        ml.addMessageAt(1, "Good Day");
+        ml.addMessageAt(2, "Good Day");
+        ml.addMessageAt(3, "Good Day");
+
+        verify(ml, times(2)).addMessageAt(eq(1), eq("Hello"));
+        verify(ml, times(3)).addMessageAt(anyInt(), eq("Good Day"));
+
+
+        /*   STUBBER   */
+
+        // because this is a mock, the method is empty.
+        ml.printStaticMessages("Hello", "Madam");
+
+        doCallRealMethod()
+                .doNothing()
+                .doNothing()
+                .doCallRealMethod()
+                .when(ml).printStaticMessages(anyString(), anyString());
+
+        ml.printStaticMessages("Hello", "Mister");  //+
+        ml.printStaticMessages("Guten", "Tag");     //-
+        ml.printStaticMessages("Guten", "Tag");     //-
+        ml.printStaticMessages("Guten", "Tag");     //+
     }
 
     @Test
